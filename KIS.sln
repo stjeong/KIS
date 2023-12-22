@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{AC69A672-B2DC-439E-875C-1329EE497A3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eFriendOpenAPI", "eFriendOpenAPI\eFriendOpenAPI.csproj", "{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC69A672-B2DC-439E-875C-1329EE497A3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC69A672-B2DC-439E-875C-1329EE497A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC69A672-B2DC-439E-875C-1329EE497A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC69A672-B2DC-439E-875C-1329EE497A3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BEA64FF-59E3-439F-9AAE-64AA0CD51079}
+	EndGlobalSection
+EndGlobal
