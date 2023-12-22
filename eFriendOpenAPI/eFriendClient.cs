@@ -76,7 +76,7 @@ public class eFriendClient
 
         if (string.IsNullOrEmpty(trId) == false)
         {
-            client.DefaultRequestHeaders.Add("authorization", $"Bearer {_accessToken?.Value}");
+            client.DefaultRequestHeaders.Add("authorization", $"{_accessToken?.Type} {_accessToken?.Value}");
             client.DefaultRequestHeaders.Add("appkey", _tokenPRequest.AppKey);
             client.DefaultRequestHeaders.Add("appsecret", _tokenPRequest.SecretKey);
 

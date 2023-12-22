@@ -14,7 +14,7 @@ for /f %%i in ('powershell.exe -ExecutionPolicy RemoteSigned -file %CURRENTDIR%.
 echo %NUGETKEY%
 
 if EXIST D:\myNuget\ (
-robocopy %CURRENTDIR%bin\%BUILDCONFIG%\%PRJNAME%.%NUGETVERSION%.nupkg D:\myNuget %PRJNAME%.%NUGETVERSION%.nupkg
+robocopy %CURRENTDIR%bin\%BUILDCONFIG%\ D:\myNuget %PRJNAME%.%NUGETVERSION%.nupkg
 ) ELSE (
     echo No local nuget directory
 )

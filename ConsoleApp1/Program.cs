@@ -36,7 +36,7 @@ internal class Program
 
         {
             Console.WriteLine($"[계좌번호: {client.Account}]");
-            주식잔고조회DTO[]? array = await client.주식잔고조회();
+            var array = await client.주식잔고조회();
 
             if (array == null)
             {
