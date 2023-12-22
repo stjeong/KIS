@@ -1,1 +1,1 @@
-# KIS
+# KIS (eFriend Expert)

@@ -1,18 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <PackageId>eFriendOpenAPI</PackageId>
+        <Version>1.0.4</Version>
+        <Authors>SeongTae Jeong</Authors>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);WINDOWS_ONLY</DefineConstants>
-  </PropertyGroup>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
+        
+        <Description>C# Wrapper classes for eFriend Expert (OpenAPI version)</Description>
+        <PackageTags>eFriendExpert, KIS</PackageTags>
+        <PackageProjectUrl>https://github.com/stjeong/KIS</PackageProjectUrl>
 
-  <ItemGroup>
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
-    <PackageReference Include="WebSerializer" Version="1.3.0" />
-  </ItemGroup>
+        <RepositoryUrl>https://github.com/stjeong/KIS.git</RepositoryUrl>
+        <RepositoryType>Github</RepositoryType>
+        <Copyright />
+        
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Link="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+        <PackageReference Include="WebSerializer" Version="1.3.0" />
+    </ItemGroup>
 
 </Project>

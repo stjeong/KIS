@@ -5,7 +5,14 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{AC69A672-B2DC-439E-875C-1329EE497A3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eFriendOpenAPI", "eFriendOpenAPI\eFriendOpenAPI.csproj", "{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eFriendOpenAPI", "eFriendOpenAPI\eFriendOpenAPI.csproj", "{CA9795D6-57F1-4BD1-BD18-5E05CE0B7BEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DB792EFC-65E9-4802-8031-5015D81CDE4C}"
+	ProjectSection(SolutionItems) = preProject
+		getPrjVersion.ps1 = getPrjVersion.ps1
+		readFile.ps1 = readFile.ps1
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
