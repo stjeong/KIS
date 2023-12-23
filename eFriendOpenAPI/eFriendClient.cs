@@ -135,7 +135,7 @@ public class eFriendClient
 
     // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock
     // 주식잔고조회[v1_국내주식-006]
-    public async Task<주식잔고조회DTO[]?> 주식잔고조회()
+    public async Task<주식잔고조회DTO[]> 주식잔고조회()
     {
         string trId = _isVTS ? "VTTC8434R" : "TTTC8434R";
         using var client = NewHttp(trId);
@@ -153,10 +153,10 @@ public class eFriendClient
         if (response.IsSuccessStatusCode)
         {
             var respBody = await response.Content.ReadFromJsonAsync<PacketResponses<주식잔고조회DTO>>();
-            return respBody?.output1;
+            return respBody?.output1 ?? Array.Empty<주식잔고조회DTO>();
         }
 
-        return null;
+        return Array.Empty<주식잔고조회DTO>();
     }
 
     public async Task<string> GetApprovalKey()

@@ -4,6 +4,8 @@ SET PRJNAME=eFriendOpenAPI
 
 FOR /F %%I IN ("%0") DO SET CURRENTDIR=%%~dpI
 
+del /Q %CURRENTDIR%bin\%BUILDCONFIG%\*.nupkg
+
 dotnet pack
 if %ERRORLEVEL% GTR 0 goto BuildError
 
