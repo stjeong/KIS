@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace eFriendOpenAPI.Extension;
 
+// https://stackoverflow.com/questions/18924996/logging-request-response-messages-when-using-httpclient
 public class LoggingHandler : DelegatingHandler
 {
     public LoggingHandler(HttpMessageHandler innerHandler)
