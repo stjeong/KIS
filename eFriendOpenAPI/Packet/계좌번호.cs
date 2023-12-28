@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace eFriendOpenAPI.Packet;
+﻿namespace eFriendOpenAPI.Packet;
 
 public class 계좌번호
 {

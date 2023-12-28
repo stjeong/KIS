@@ -54,17 +54,23 @@ internal class Program
             }
         }
 
-        // 주식 주문
+        // 주식 주문 및 취소
         {
             string pdno = "305720"; // 종목코드(6자리)
-            (주식주문현금DTO? dto, string error) = await client.주식현금매수주문(pdno, 1, "00", 30_000);
-            if (dto == null)
+            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(
+                /*종목코드*/ pdno, /*주문수량*/ 1, /*지정가*/ "00", /*주문단가*/ 20_000);
+            if (order == null)
             {
                 Console.WriteLine($"[Failed] {error}");
             }
             else
             {
-                Console.WriteLine(dto);
+                Console.WriteLine($"[현금매수] {order}");
+
+                await Task.Delay(1000 * 5);
+
+                (var canceled, error) = await client.주식주문전량취소(order.KRX_FWDG_ORD_ORGNO, order.ODNO);
+                Console.WriteLine($"[전량취소] {canceled} {error}");
             }
         }
     }

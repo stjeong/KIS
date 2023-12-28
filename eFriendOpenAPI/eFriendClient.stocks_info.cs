@@ -44,7 +44,7 @@ partial class eFriendClient
         foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
         {
             var item = KOSDAQCode.ReadFromMSTFile(line);
-            codes[item.표준코드] = item;
+            codes[item.단축코드] = item;
         }
 
         s_kosdaqCodes = codes;
@@ -69,7 +69,7 @@ partial class eFriendClient
         foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
         {
             var item = KOSPICode.ReadFromMSTFile(line);
-            codes[item.표준코드] = item;
+            codes[item.단축코드] = item;
         }
 
         s_kospiCodes = codes;
