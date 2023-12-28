@@ -1,4 +1,5 @@
 ﻿using eFriendOpenAPI;
+using eFriendOpenAPI.Extension;
 using eFriendOpenAPI.Packet;
 using System.Diagnostics.CodeAnalysis;
 
@@ -6,12 +7,7 @@ namespace ConsoleApp1;
 
 internal class Program
 {
-    [AllowNull]
-    static KOSPICode[] s_kospiCodes;
-
-    [AllowNull]
-    static KOSDAQCode[] s_kosdaqCodes;
-
+    
     static async Task Main(string[] args)
     {
         (string appKey, string secretKey, string account) = LoadKeyInfo("kinvest.key.01.txt");
@@ -22,11 +18,8 @@ internal class Program
         client.DebugMode = true;
 
         string tempDirectory = Path.Combine(Path.GetTempPath(), "eFriendOpenAPI");
-        s_kospiCodes = await client.LoadKospiMasterCode(tempDirectory);
-        s_kosdaqCodes = await client.LoadKosdaqiMasterCode(tempDirectory);
-
-        var 유한양행 = s_kospiCodes.First(x => x.한글명 == "유한양행");
-        var 차백신연구소 = s_kosdaqCodes.First(x => x.한글명 == "차백신연구소");
+        await client.LoadKospiMasterCode(tempDirectory);
+        await client.LoadKosdaqiMasterCode(tempDirectory);
 
         if (isVTS == false)
         {
@@ -44,11 +37,6 @@ internal class Program
         }
 
         {
-            var dto = await client.주식현재가시세("305720");
-            Console.WriteLine(dto);
-        }
-
-        {
             Console.WriteLine($"[계좌번호: {client.Account}]");
             var array = await client.주식잔고조회();
 
@@ -60,7 +48,9 @@ internal class Program
             {
                 foreach (주식잔고조회DTO? dto in array)
                 {
-                    Console.WriteLine($"\t{dto}");
+                    Console.Write($"\t{dto}");
+                    var 시세 = await client.주식현재가시세(dto.pdno);
+                    Console.WriteLine($", 현재가={시세?.stck_prpr.ToMoney():n0}");
                 }
             }
         }

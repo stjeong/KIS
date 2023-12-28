@@ -1,16 +1,18 @@
-﻿namespace eFriendOpenAPI.Packet;
+﻿using eFriendOpenAPI.Extension;
+
+namespace eFriendOpenAPI.Packet;
 
 public class 주식잔고조회Query
 {
     public string CANO { get; set; } = ""; // 종합계좌번호
     public string ACNT_PRDT_CD { get; set; } = ""; // 계좌상품코드
-    public string AFHR_FLPR_YN { get; set; } = "N"; // 시간외단일가여부
-    public string OFL_YN { get; set; } = "N"; // 오프라인여부
-    public string INQR_DVSN { get; set; } = "02"; // 조회구분
-    public string UNPR_DVSN { get; set; } = "01"; // 단가구분
-    public string FUND_STTL_ICLD_YN { get; set; } = "N"; // 펀드결제분포함여부	
-    public string FNCG_AMT_AUTO_RDPT_YN { get; set; } = "N"; // 융자금액자동상환여부
-    public string PRCS_DVSN { get; set; } = "00"; // 처리구분
+    public string AFHR_FLPR_YN { get; set; } = "N"; // 시간외단일가여부 (N : 기본값, Y : 시간외단일가)
+    public string OFL_YN { get; set; } = "N"; // 오프라인여부 (공란(Default))
+    public string INQR_DVSN { get; set; } = "02"; // 조회구분 (01 : 대출일별, 02 : 종목별)
+    public string UNPR_DVSN { get; set; } = "01"; // 단가구분 (01 : 기본값)
+    public string FUND_STTL_ICLD_YN { get; set; } = "N"; // 펀드결제분포함여부 (N : 포함하지 않음, Y : 포함)
+    public string FNCG_AMT_AUTO_RDPT_YN { get; set; } = "N"; // 융자금액자동상환여부 (N : 기본값)
+    public string PRCS_DVSN { get; set; } = "00"; // 처리구분 (00 : 전일매매포함, 01 : 전일매매미포함)
     public string CTX_AREA_FK100 { get; set; } = ""; // 연속조회검색조건100
     public string CTX_AREA_NK100 { get; set; } = ""; // 연속조회키100
 }
@@ -72,6 +74,6 @@ public class 주식잔고조회DTO
 
     public override string ToString()
     {
-        return $"{prdt_name}({pdno}), 보유 {hldg_qty}, 매입평균가격 {pchs_avg_pric}, 평가손익금액 {evlu_pfls_amt}";
+        return $"{prdt_name}({pdno}), 보유 {hldg_qty}, 매입평균가격 {pchs_avg_pric.ToMoney():n0}, 평가손익금액 {evlu_pfls_amt.ToMoney():n0}";
     }
 }

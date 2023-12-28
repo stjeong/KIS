@@ -1,4 +1,6 @@
-﻿namespace eFriendOpenAPI.Packet;
+﻿using eFriendOpenAPI.Extension;
+
+namespace eFriendOpenAPI.Packet;
 
 public class 주식현재가시세Query
 {
@@ -110,6 +112,6 @@ public class 주식현재가시세DTO
 
     public override string ToString()
     {
-        return $"(최저가: {stck_lwpr}) ~ (현재가: {stck_prpr}) ~ (최고가: {stck_hgpr}), 전일 대비: {prdy_vrss}, 호가 단위: {aspr_unit}, ({stck_shrn_iscd}, {rprs_mrkt_kor_name})";
+        return $"(최저가: {stck_lwpr.ToMoney():n0}) ~ (현재가: {stck_prpr.ToMoney():n0}) ~ (최고가: {stck_hgpr.ToMoney():n0}), 전일 대비: {prdy_vrss}, 호가 단위: {aspr_unit}, ({stck_shrn_iscd}, {rprs_mrkt_kor_name})";
     }
 }

@@ -1,6 +1,7 @@
 ﻿using eFriendOpenAPI.Packet;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -9,48 +10,58 @@ using System.Threading.Tasks;
 namespace eFriendOpenAPI;
 partial class eFriendClient
 {
+    [AllowNull]
+    static Dictionary<string, KOSPICode> s_kospiCodes;
+
+    [AllowNull]
+    static Dictionary<string, KOSDAQCode> s_kosdaqCodes;
+
     // 코스닥주식종목코드(kosdaq_code.mst) 정제 파이썬 파일
     // https://github.com/koreainvestment/open-trading-api/blob/main/stocks_info/kis_kosdaq_code_mst.py
-    public async Task<KOSDAQCode[]> LoadKosdaqiMasterCode(string baseDirectory)
+    public async Task<Dictionary<string, KOSDAQCode>> LoadKosdaqiMasterCode(string baseDirectory)
     {
+        Dictionary<string, KOSDAQCode> codes = new();
+
         string codeFileName = "kosdaq_code.mst";
         if (await CacheDownloadAsync(baseDirectory, codeFileName, TimeSpan.FromHours(23)) == false)
         {
-            return Array.Empty<KOSDAQCode>();
+            return codes;
         }
 
         // "%TEMP%\eFriendOpenAPI\kosdaq_code.mst"
         string mstFile = Path.Combine(baseDirectory, codeFileName);
-        List<KOSDAQCode> list = new();
 
         foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
         {
-            list.Add(KOSDAQCode.ReadFromMSTFile(line));
+            var item = KOSDAQCode.ReadFromMSTFile(line);
+            codes[item.표준코드] = item;
         }
 
-        return list.ToArray();
+        return codes;
     }
 
     // 코스피주식종목코드(kospi_code.mst) 정제 파이썬 파일
     // https://github.com/koreainvestment/open-trading-api/blob/main/stocks_info/kis_kospi_code_mst.py
-    public async Task<KOSPICode[]> LoadKospiMasterCode(string baseDirectory)
+    public async Task<Dictionary<string, KOSPICode>> LoadKospiMasterCode(string baseDirectory)
     {
+        Dictionary<string, KOSPICode> codes = new();
+
         string codeFileName = "kospi_code.mst";
         if (await CacheDownloadAsync(baseDirectory, codeFileName, TimeSpan.FromHours(23)) == false)
         {
-            return Array.Empty<KOSPICode>();
+            return codes;
         }
 
         // "%TEMP%\eFriendOpenAPI\kospi_code.mst"
         string mstFile = Path.Combine(baseDirectory, codeFileName);
-        List<KOSPICode> list = new();
 
         foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
         {
-            list.Add(KOSPICode.ReadFromMSTFile(line));
+            var item = KOSPICode.ReadFromMSTFile(line);
+            codes[item.표준코드] = item;
         }
 
-        return list.ToArray();
+        return codes;
     }
 
     private async Task<bool> CacheDownloadAsync(string baseDirectory, string codeFileName, TimeSpan expire)
