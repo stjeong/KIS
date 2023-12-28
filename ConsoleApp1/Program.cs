@@ -1,7 +1,6 @@
 ﻿using eFriendOpenAPI;
 using eFriendOpenAPI.Extension;
 using eFriendOpenAPI.Packet;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ConsoleApp1;
 
@@ -52,6 +51,20 @@ internal class Program
                     var 시세 = await client.주식현재가시세(dto.pdno);
                     Console.WriteLine($", 현재가={시세?.stck_prpr.ToMoney():n0}");
                 }
+            }
+        }
+
+        // 주식 주문
+        {
+            string pdno = "305720"; // 종목코드(6자리)
+            (주식주문현금DTO? dto, string error) = await client.주식현금매수주문(pdno, 1, "00", 30_000);
+            if (dto == null)
+            {
+                Console.WriteLine($"[Failed] {error}");
+            }
+            else
+            {
+                Console.WriteLine(dto);
             }
         }
     }

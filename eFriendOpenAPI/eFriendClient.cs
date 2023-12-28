@@ -110,40 +110,6 @@ public partial class eFriendClient
         return client; ;
     }
 
-
-    // 주식주문(현금)[v1_국내주식-001]
-    // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock
-    public async Task<object?> 주식주문현금()
-    {
-        return null;
-    }
-
-    // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock
-    // 주식잔고조회[v1_국내주식-006]
-    public async Task<주식잔고조회DTO[]> 주식잔고조회()
-    {
-        string trId = _isVTS ? "VTTC8434R" : "TTTC8434R";
-        using var client = NewHttp(trId);
-
-        주식잔고조회Query query = new()
-        {
-            CANO = this._account.CANO,
-            ACNT_PRDT_CD = this._account.ACNT_PRDT_CD,
-        };
-
-        string url = "/uapi/domestic-stock/v1/trading/inquire-balance?" + WebSerializer.ToQueryString(query);
-
-        var response = await client.GetAsync(url);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var respBody = await response.Content.ReadFromJsonAsync<PacketResponses<주식잔고조회DTO>>();
-            return respBody?.output1 ?? Array.Empty<주식잔고조회DTO>();
-        }
-
-        return Array.Empty<주식잔고조회DTO>();
-    }
-
     // 주식현재가 시세[v1_국내주식-008]
     // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock-quotations
     public async Task<주식현재가시세DTO?> 주식현재가시세(string FID_INPUT_ISCD, string FID_COND_MRKT_DIV_CODE = "J")

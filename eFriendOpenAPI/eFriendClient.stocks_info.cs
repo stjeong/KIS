@@ -16,6 +16,16 @@ partial class eFriendClient
     [AllowNull]
     static Dictionary<string, KOSDAQCode> s_kosdaqCodes;
 
+    public bool CodeExists(string code)
+    {
+        if (s_kospiCodes.ContainsKey(code) == true)
+        {
+            return true;
+        }
+
+        return s_kosdaqCodes.ContainsKey(code);
+    }
+
     // 코스닥주식종목코드(kosdaq_code.mst) 정제 파이썬 파일
     // https://github.com/koreainvestment/open-trading-api/blob/main/stocks_info/kis_kosdaq_code_mst.py
     public async Task<Dictionary<string, KOSDAQCode>> LoadKosdaqiMasterCode(string baseDirectory)
@@ -37,6 +47,7 @@ partial class eFriendClient
             codes[item.표준코드] = item;
         }
 
+        s_kosdaqCodes = codes;
         return codes;
     }
 
@@ -61,6 +72,7 @@ partial class eFriendClient
             codes[item.표준코드] = item;
         }
 
+        s_kospiCodes = codes;
         return codes;
     }
 

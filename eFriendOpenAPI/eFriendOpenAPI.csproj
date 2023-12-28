@@ -41,6 +41,9 @@
         <None Include="eFriendClient.stocks_info.cs">
             <DependentUpon>eFriendClient.cs</DependentUpon>
         </None>
+        <None Include="eFriendClient.domestic_stocks.trading.cs">
+            <DependentUpon>eFriendClient.cs</DependentUpon>
+        </None>
     </ItemGroup>
 
 </Project>
