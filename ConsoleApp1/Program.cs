@@ -1,10 +1,14 @@
 ﻿using eFriendOpenAPI;
 using eFriendOpenAPI.Packet;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ConsoleApp1;
 
 internal class Program
 {
+    [AllowNull]
+    static KOSPICode[] s_kospiCodes;
+
     static async Task Main(string[] args)
     {
         (string appKey, string secretKey, string account) = LoadKeyInfo("kinvest.key.01.txt");
@@ -13,6 +17,12 @@ internal class Program
 
         eFriendClient client = new eFriendClient(isVTS, appKey, secretKey, account);
         client.DebugMode = true;
+
+        string tempDirectory = Path.Combine(Path.GetTempPath(), "eFriendOpenAPI");
+        s_kospiCodes = await client.LoadKospiMasterCode(tempDirectory);
+
+        var item = s_kospiCodes.First(x => x.한글명 == "유한양행");
+        item.ToString();
 
         if (isVTS == false)
         {

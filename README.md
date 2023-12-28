@@ -21,6 +21,19 @@ eFriendClient client = new eFriendClient(isVTS, appKey, secretKey, account);
 ## Call API
 
 ### 국내주식주문
+
+#### 주식주문(현금)[v1_국내주식-001] (/uapi/domestic-stock/v1/trading/order-cash)
+
+``` cs
+var array = await client.주식잔고조회();
+
+foreach (주식잔고조회DTO dto in array)
+{
+    Console.WriteLine($"\t{dto}");
+}
+```
+***
+
 #### 주식잔고조회 (/uapi/domestic-stock/v1/trading/inquire-balance)
 
 ``` cs
