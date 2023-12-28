@@ -72,6 +72,6 @@ public class 주식잔고조회DTO
 
     public override string ToString()
     {
-        return $"{prdt_name}, 보유 {hldg_qty}, 매입평균가격 {pchs_avg_pric}, 평가손익금액 {evlu_pfls_amt}";
+        return $"{prdt_name}({pdno}), 보유 {hldg_qty}, 매입평균가격 {pchs_avg_pric}, 평가손익금액 {evlu_pfls_amt}";
     }
 }

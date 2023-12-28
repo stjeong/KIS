@@ -2,7 +2,6 @@
 using Cysharp.Web;
 using eFriendOpenAPI.Extension;
 using eFriendOpenAPI.Packet;
-using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
@@ -12,7 +11,7 @@ using System.Text.Json;
 
 namespace eFriendOpenAPI;
 
-public class eFriendClient
+public partial class eFriendClient
 {
     static byte[] _entropy = { 0xfd, 0xed, 0x10, 0x20, 0xe9, 0x75 };
     static HttpClientHandler _sharedHandler = new HttpClientHandler() { MaxConnectionsPerServer = 1 };
@@ -111,65 +110,6 @@ public class eFriendClient
         return client; ;
     }
 
-    // 코스피주식종목코드(kospi_code.mst) 정제 파이썬 파일
-    // https://github.com/koreainvestment/open-trading-api/blob/main/stocks_info/kis_kospi_code_mst.py
-    public async Task<KOSPICode[]> LoadKospiMasterCode(string baseDirectory)
-    {
-        string codeFileName = "kospi_code.mst";
-        if (await CacheDownloadAsync(baseDirectory, codeFileName, TimeSpan.FromHours(23)) == false)
-        {
-            return Array.Empty<KOSPICode>();
-        }
-
-        // "%TEMP%\eFriendOpenAPI\kospi_code.mst"
-        string mstFile = Path.Combine(baseDirectory, codeFileName);
-        List<KOSPICode> list = new();
-
-        foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
-        {
-            list.Add(KOSPICode.ReadFromMSTFile(line));
-        }
-
-        return list.ToArray();
-    }
-
-    private async Task<bool> CacheDownloadAsync(string baseDirectory, string codeFileName, TimeSpan expire)
-    {
-        string codeFilePath = Path.Combine(baseDirectory, codeFileName);
-        if (File.Exists(codeFilePath))
-        {
-            FileInfo fileInfo = new FileInfo(codeFilePath);
-            if (fileInfo.CreationTimeUtc.Add(expire) < DateTime.UtcNow)
-            {
-                File.Delete(codeFilePath);
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        HttpClient client = new HttpClient();
-
-        CancellationTokenSource tokenSource = new CancellationTokenSource();
-        tokenSource.CancelAfter(TimeSpan.FromSeconds(10));
-
-        string masterFile = "https://new.real.download.dws.co.kr/common/master/kospi_code.mst.zip";
-        Stream? stream = await client.GetStreamAsync(masterFile, tokenSource.Token);
-
-        if (stream == null)
-        {
-            return false;
-        }
-
-        using (stream)
-        using (ZipArchive zipArchive = new ZipArchive(stream))
-        {
-            zipArchive.ExtractToDirectory(baseDirectory);
-        }
-
-        return true;
-    }
 
     // 주식주문(현금)[v1_국내주식-001]
     // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock
@@ -177,7 +117,6 @@ public class eFriendClient
     {
         return null;
     }
-
 
     // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock
     // 주식잔고조회[v1_국내주식-006]
@@ -229,7 +168,6 @@ public class eFriendClient
 
         return null;
     }
-
 
     public async Task<string> GetApprovalKey()
     {

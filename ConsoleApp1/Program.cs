@@ -9,6 +9,9 @@ internal class Program
     [AllowNull]
     static KOSPICode[] s_kospiCodes;
 
+    [AllowNull]
+    static KOSDAQCode[] s_kosdaqCodes;
+
     static async Task Main(string[] args)
     {
         (string appKey, string secretKey, string account) = LoadKeyInfo("kinvest.key.01.txt");
@@ -20,9 +23,10 @@ internal class Program
 
         string tempDirectory = Path.Combine(Path.GetTempPath(), "eFriendOpenAPI");
         s_kospiCodes = await client.LoadKospiMasterCode(tempDirectory);
+        s_kosdaqCodes = await client.LoadKosdaqiMasterCode(tempDirectory);
 
-        var item = s_kospiCodes.First(x => x.한글명 == "유한양행");
-        item.ToString();
+        var 유한양행 = s_kospiCodes.First(x => x.한글명 == "유한양행");
+        var 차백신연구소 = s_kosdaqCodes.First(x => x.한글명 == "차백신연구소");
 
         if (isVTS == false)
         {

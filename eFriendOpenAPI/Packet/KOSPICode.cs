@@ -13,7 +13,6 @@ namespace eFriendOpenAPI.Packet;
 // https://github.com/koreainvestment/open-trading-api/blob/main/stocks_info/kis_kospi_code_mst.py
 public class KOSPICode
 {
-    public static decimal 단위_억 = 100_000_000;
     #pragma warning disable format
     public static int[] field_specs = [2, 1, 4, 4, 4,
                                        1, 1, 1, 1, 1,

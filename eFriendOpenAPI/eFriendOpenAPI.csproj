@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <PackageId>eFriendOpenAPI</PackageId>
-        <Version>1.0.8</Version>
+        <Version>1.0.9</Version>
         <Authors>SeongTae Jeong</Authors>
 
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -34,6 +34,13 @@
         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
         <PackageReference Include="WebSerializer" Version="1.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="eFriendClient.cs" />
+        <None Include="eFriendClient.stocks_info.cs">
+            <DependentUpon>eFriendClient.cs</DependentUpon>
+        </None>
     </ItemGroup>
 
 </Project>
