@@ -41,7 +41,7 @@ partial class eFriendClient
         // "%TEMP%\eFriendOpenAPI\kosdaq_code.mst"
         string mstFile = Path.Combine(baseDirectory, codeFileName);
 
-        foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
+        foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("ks_c_5601-1987")))
         {
             var item = KOSDAQCode.ReadFromMSTFile(line);
             codes[item.단축코드] = item;
@@ -66,7 +66,7 @@ partial class eFriendClient
         // "%TEMP%\eFriendOpenAPI\kospi_code.mst"
         string mstFile = Path.Combine(baseDirectory, codeFileName);
 
-        foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("euc-kr")))
+        foreach (string line in File.ReadAllLines(mstFile, Encoding.GetEncoding("ks_c_5601-1987")))
         {
             var item = KOSPICode.ReadFromMSTFile(line);
             codes[item.단축코드] = item;
