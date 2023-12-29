@@ -139,6 +139,53 @@ public partial class eFriendClient
         return null;
     }
 
+    public async Task<bool> 휴장일()
+    {
+        DateTime dt = DateTime.Now;
+        string BASS_DT = dt.ToString("yyyyMMdd");
+
+        국내휴장일조회DTO[]? dto = await 국내휴장일조회(BASS_DT);
+        if (dto == null)
+        {
+            return false;
+        }
+
+        foreach (var item in dto)
+        {
+            if (item.bass_dt == BASS_DT)
+            {
+                return item.opnd_yn == "Y";
+            }
+        }
+
+        return false;
+    }
+
+    // 국내휴장일조회
+    public async Task<국내휴장일조회DTO[]?> 국내휴장일조회(string BASS_DT)
+    {
+        using var client = NewHttp("CTCA0903R");
+
+        국내휴장일조회Query query = new()
+        {
+            BASS_DT = BASS_DT,
+            CTX_AREA_NK = "",
+            CTX_AREA_FK = "",
+        };
+
+        string url = "/uapi/domestic-stock/v1/quotations/chk-holiday?" + WebSerializer.ToQueryString(query);
+
+        var response = await client.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var respBody = await response.Content.ReadFromJsonAsync<ResponseChkHoliday<국내휴장일조회DTO>>();
+            return respBody?.output;
+        }
+
+        return null;
+    }
+
     public async Task<string> GetApprovalKey()
     {
         using var client = NewHttp();
