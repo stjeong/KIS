@@ -59,11 +59,11 @@ public partial class eFriendClient
         _account = new 계좌번호(text);
     }
 
-    public HttpClient NewHttp(string trId = "", bool dumpHttp = false)
+    public HttpClient NewHttp(string trId = "", string tr_cont = "")
     {
         HttpClient client;
 
-        if (dumpHttp)
+        if (this.DebugMode)
         {
             client = new HttpClient(new LoggingHandler(_sharedHandler), false);
         }
@@ -83,7 +83,11 @@ public partial class eFriendClient
             client.DefaultRequestHeaders.Add("appsecret", _tokenPRequest.SecretKey);
 
             client.DefaultRequestHeaders.Add("tr_id", trId);
-            client.DefaultRequestHeaders.Add("tr_cont", "");
+
+            if (string.IsNullOrEmpty(tr_cont) == false)
+            {
+                client.DefaultRequestHeaders.Add("tr_cont", "");
+            }
 
             client.DefaultRequestHeaders.Add("custtype", _isLegalPerson ? "B" : "P");
 

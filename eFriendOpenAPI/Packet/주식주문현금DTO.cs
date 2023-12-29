@@ -36,8 +36,6 @@ public class 주식주문현금Query
                                                 // 주문단가가 없는주문은 상한가로 주문금액을 선정하고 이후 체결이되면 체결금액로 정산
                                                 // 지정가 이외의 장전 시간외, 장후 시간외, 시장가 등 모든 주문구분의 경우 1주당 가격을 공란으로 비우지 않음 "0"으로 입력 권고
                                                 // 1주당 가격
-    [JsonPropertyName("ALGO_NO")]
-    public string ALGO_NO { get; set; } = ""; // 알고리즘번호 (미사용)
 }
 
 public class 주식주문현금DTO

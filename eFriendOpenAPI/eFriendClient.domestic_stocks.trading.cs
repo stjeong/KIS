@@ -37,7 +37,7 @@ partial class eFriendClient
     {
         if (ORD_DVSN == "00" && ORD_UNPR == 0)
         {
-            throw new ArgumentException("[매도주문] 지정가 주문시 주문단가를 입력해야 합니다.");
+            return (null, "[매도주문] 지정가 주문시 주문단가를 입력해야 합니다.");
         }
 
         string trId = _isVTS ? "VTTC0801U" : "TTTC0801U";
@@ -63,7 +63,6 @@ partial class eFriendClient
             ORD_DVSN = ORD_DVSN,
             ORD_QTY = ORD_QTY.ToString(),
             ORD_UNPR = ORD_UNPR.ToString(),
-            ALGO_NO = ""
         };
 
         string url = "/uapi/domestic-stock/v1/trading/order-cash";

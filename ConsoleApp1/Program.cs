@@ -14,7 +14,6 @@ internal class Program
         bool isVTS = false; // true: 모의 Domain, false: 실전 Domain
 
         eFriendClient client = new eFriendClient(isVTS, appKey, secretKey, account);
-        client.DebugMode = true;
 
         string tempDirectory = Path.Combine(Path.GetTempPath(), "eFriendOpenAPI");
         await client.LoadKospiMasterCode(tempDirectory);
@@ -57,17 +56,19 @@ internal class Program
         // 주식 주문 및 취소
         {
             string pdno = "305720"; // 종목코드(6자리)
+            client.DebugMode = true;
             (주식주문현금DTO? order, string error) = await client.주식현금매수주문(
                 /*종목코드*/ pdno, /*주문수량*/ 1, /*지정가*/ "00", /*주문단가*/ 20_000);
+            client.DebugMode = false;
             if (order == null)
             {
-                Console.WriteLine($"[Failed] {error}");
+                Console.WriteLine($"[매수실패] {error}");
             }
             else
             {
                 Console.WriteLine($"[현금매수] {order}");
 
-                await Task.Delay(1000 * 5);
+                await Task.Delay(1000 * 5); // 5초 후 전량 취소
 
                 (var canceled, error) = await client.주식주문전량취소(order.KRX_FWDG_ORD_ORGNO, order.ODNO);
                 Console.WriteLine($"[전량취소] {canceled} {error}");
