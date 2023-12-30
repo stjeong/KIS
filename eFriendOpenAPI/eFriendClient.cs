@@ -116,14 +116,14 @@ public partial class eFriendClient
 
     // 주식현재가 시세[v1_국내주식-008]
     // https://apiportal.koreainvestment.com/apiservice/apiservice-domestic-stock-quotations
-    public async Task<주식현재가시세DTO?> 주식현재가시세(string FID_INPUT_ISCD, string FID_COND_MRKT_DIV_CODE = "J")
+    public async Task<주식현재가시세DTO?> 주식현재가시세(string FID입력종목코드, string FID조건시장분류코드 = "J")
     {
         using var client = NewHttp("FHKST01010100");
 
         주식현재가시세Query query = new()
         {
-            FID_COND_MRKT_DIV_CODE = FID_COND_MRKT_DIV_CODE,
-            FID_INPUT_ISCD = FID_INPUT_ISCD,
+            FID_COND_MRKT_DIV_CODE = FID조건시장분류코드,
+            FID_INPUT_ISCD = FID입력종목코드,
         };
 
         string url = "/uapi/domestic-stock/v1/quotations/inquire-price?" + WebSerializer.ToQueryString(query);
@@ -162,13 +162,13 @@ public partial class eFriendClient
     }
 
     // 국내휴장일조회
-    public async Task<국내휴장일조회DTO[]?> 국내휴장일조회(string BASS_DT)
+    public async Task<국내휴장일조회DTO[]?> 국내휴장일조회(string 기준일자)
     {
         using var client = NewHttp("CTCA0903R");
 
         국내휴장일조회Query query = new()
         {
-            BASS_DT = BASS_DT,
+            BASS_DT = 기준일자,
             CTX_AREA_NK = "",
             CTX_AREA_FK = "",
         };
