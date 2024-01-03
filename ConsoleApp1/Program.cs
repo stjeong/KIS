@@ -34,6 +34,13 @@ internal class Program
             return;
         }
 
+        // 실시간 (웹소켓) 접속키 발급
+        if (await client.ConnectWebSocketAsync() == false)
+        {
+            Console.WriteLine("Failed to get connection for websocket");
+            return;
+        }
+
         {
             Console.WriteLine($"[계좌번호: {client.Account}]");
             var array = await client.주식잔고조회();
@@ -62,10 +69,9 @@ internal class Program
         else 
         {
             // 주식 주문 및 취소
-            string pdno = "305720"; // 종목코드(6자리)
+            string 종목코드 = "305720"; // 종목코드(6자리)
 
-            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(
-                /*종목코드*/ pdno, /*주문수량*/ 1, /*지정가*/ "00", /*주문단가*/ 10_000);
+            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(종목코드, /*주문수량*/ 1, /*지정가*/ "00", /*주문단가*/ 10_000);
             if (order == null)
             {
                 Console.WriteLine($"[매수실패] {error}");
