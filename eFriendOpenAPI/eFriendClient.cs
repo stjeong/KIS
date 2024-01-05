@@ -24,6 +24,7 @@ public partial class eFriendClient
     AccessToken? _accessToken;
     계좌번호 _account;
     public 계좌번호 Account { get => _account; }
+    string _approvalKey = "";
 
     bool _isVTS = false;
     bool _isLegalPerson = false;
@@ -188,69 +189,6 @@ public partial class eFriendClient
         }
 
         return null;
-    }
-
-    public async Task<string> GetApprovalKey()
-    {
-        using var client = NewHttp();
-        var response = await client.PostAsJsonAsync("/oauth2/Approval", _tokenPRequest.AsApprovalRequest());
-        if (response.IsSuccessStatusCode)
-        {
-            var respBody = await response.Content.ReadFromJsonAsync<OAuth2ApprovalResponse>();
-            return respBody?.ApprovalKey ?? "";
-        }
-
-        return "";
-    }
-
-    public async Task<bool> ConnectWebSocketAsync()
-    {
-        string approvalKey = await GetApprovalKey();
-        if (string.IsNullOrEmpty(approvalKey))
-        {
-            return false;
-        }
-
-        string url = (_isVTS) ? "ws://ops.koreainvestment.com:31000" : "ws://ops.koreainvestment.com:21000";
-        var connectTimeout = new CancellationTokenSource();
-        connectTimeout.CancelAfter(2000);
-
-        _webSocket = new ClientWebSocket();
-        await _webSocket.ConnectAsync(new Uri(url), connectTimeout.Token);
-
-        if (_webSocket.State != System.Net.WebSockets.WebSocketState.Open)
-        {
-            Console.WriteLine($"Failed to connect: {url}");
-            return false;
-        }
-
-        _ = Task.Run(() => WebSocketProc());
-
-        return true;
-    }
-
-    private async Task WebSocketProc()
-    {
-        if (_webSocket == null)
-        {
-            return;
-        }
-
-        while (_webSocket.State == System.Net.WebSockets.WebSocketState.Open)
-        {
-            var buffer = new ArraySegment<byte>(new byte[1024]);
-            var result = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
-            if (result.MessageType == System.Net.WebSockets.WebSocketMessageType.Close)
-            {
-                await _webSocket.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-            }
-            else
-            {
-                byte[] encoded = buffer.Array ?? Array.Empty<byte>();
-                string msg = Encoding.UTF8.GetString(encoded, 0, encoded.Length);
-                Console.WriteLine($"WebSocket: {msg}");
-            }
-        }
     }
 
     public async Task<bool> CheckAccessToken()
