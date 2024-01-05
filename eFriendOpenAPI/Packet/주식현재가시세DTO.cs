@@ -1,4 +1,5 @@
 ﻿using eFriendOpenAPI.Extension;
+using System.Text.Json.Serialization;
 
 namespace eFriendOpenAPI.Packet;
 
@@ -48,6 +49,21 @@ public class 주식현재가시세DTO
     public string stck_lwpr { get; set; } = "";  // 주식 최저가 String  Y	10	
     public string stck_mxpr { get; set; } = "";  // 주식 상한가 String  Y	10	
     public string stck_llam { get; set; } = "";  // 주식 하한가 String  Y	10	
+
+    [JsonIgnore]
+    public uint 하한가
+    {
+        get
+        {
+            if (uint.TryParse(stck_llam, out uint result))
+            {
+                return result;
+            }
+
+            return 0;
+        }
+    }
+
     public string stck_sdpr { get; set; } = ""; // 주식 기준가 String  Y	10	
     public string wghn_avrg_stck_prc { get; set; } = "";  //  가중 평균 주식 가격 String  Y	21	
     public string hts_frgn_ehrt { get; set; } = "";  // HTS 외국인 소진율 String Y 82	

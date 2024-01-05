@@ -34,7 +34,7 @@ internal class Program
             return;
         }
 
-        // 실시간 (웹소켓) 접속키 발급
+        // 웹소켓
         if (await client.ConnectWebSocketAsync() == false)
         {
             Console.WriteLine("Failed to get connection for websocket");
@@ -65,16 +65,20 @@ internal class Program
         if (opend == false)
         {
             Console.WriteLine("오늘은 휴장일입니다.");
+            return;
         }
-        else 
+        else
         {
             // 주식 주문 및 취소
             string 종목코드 = "305720"; // 종목코드(6자리)
 
-            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(종목코드, /*주문수량*/ 1, /*지정가*/ "00", /*주문단가*/ 10_000);
+            var 시세 = await client.주식현재가시세(종목코드);
+
+            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(종목코드, /*주문수량*/ 1, /*지정가*/ "00",
+                /*주문단가*/ 시세?.하한가 ?? 10_000);
             if (order == null)
             {
-                Console.WriteLine($"[매수실패] {error}");
+                Console.WriteLine($"[매수실패: 종목: {종목코드}, 가격: {시세?.하한가}] {error}");
             }
             else
             {
@@ -86,6 +90,20 @@ internal class Program
                 Console.WriteLine($"[전량취소] {canceled} {error}");
             }
         }
+
+        {
+            string 종목코드 = "305720"; // 종목코드(6자리)
+            Console.WriteLine($"[실시간 체결 구독] {종목코드}");
+            await client.국내주식실시간체결가(종목코드, true);
+
+            await Task.Delay(1000 * 30); // 30초 후 실시간 해제
+            Console.WriteLine($"[실시간 체결 해제] {종목코드}");
+            await Task.Delay(1000 * 30); // 30초 후 실시간 해제
+            await client.국내주식실시간체결가(종목코드, false);
+        }
+
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadLine();
     }
 
     private static (string appKey, string secretKey, string account) LoadKeyInfo(string keyFileName)
