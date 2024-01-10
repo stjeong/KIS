@@ -26,6 +26,16 @@ partial class eFriendClient
         return s_kosdaqCodes.ContainsKey(code);
     }
 
+    public string GetCodeName(string code)
+    {
+        if (s_kospiCodes.ContainsKey(code) == true)
+        {
+            return s_kospiCodes[code].한글명;
+        }
+
+        return s_kosdaqCodes[code].한글명;
+    }
+
     // 코스닥주식종목코드(kosdaq_code.mst) 정제 파이썬 파일
     // https://github.com/koreainvestment/open-trading-api/blob/main/stocks_info/kis_kosdaq_code_mst.py
     public async Task<Dictionary<string, KOSDAQCode>> LoadKosdaqiMasterCode(string baseDirectory)
