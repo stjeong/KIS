@@ -6,14 +6,19 @@ namespace ConsoleApp1;
 
 internal class Program
 {
-    
     static async Task Main(string[] args)
     {
         (string appKey, string secretKey, string account) = LoadKeyInfo("kinvest.key.01.txt");
 
         bool isVTS = false; // true: 모의 Domain, false: 실전 Domain
+        bool useWebSocket = true;
 
         eFriendClient client = new eFriendClient(isVTS, appKey, secretKey, account);
+
+        client.국내주식실시간체결가Arrived += (sender, e) =>
+        {
+            Console.WriteLine($"[{DateTime.Now}] [실시간 체결] {e}");
+        };
 
         string tempDirectory = Path.Combine(Path.GetTempPath(), "eFriendOpenAPI");
         await client.LoadKospiMasterCode(tempDirectory);
@@ -34,11 +39,14 @@ internal class Program
             return;
         }
 
-        // 웹소켓
-        if (await client.ConnectWebSocketAsync() == false)
+        if (useWebSocket)
         {
-            Console.WriteLine("Failed to get connection for websocket");
-            return;
+            // 웹소켓
+            if (await client.ConnectWebSocketAsync() == false)
+            {
+                Console.WriteLine("Failed to get connection for websocket");
+                return;
+            }
         }
 
         {
@@ -69,37 +77,40 @@ internal class Program
         }
         else
         {
-            // 주식 주문 및 취소
+            // 주식 주문 및 취소 (테스트를 위해, 하한가로 주문 후 전량 취소)
             string 종목코드 = "305720"; // 종목코드(6자리)
+            string 종목이름 = client.GetCodeName(종목코드);
 
             var 시세 = await client.주식현재가시세(종목코드);
+            uint 주문단가 = 시세?.하한가 ?? 10_000;
 
-            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(종목코드, /*주문수량*/ 1, /*지정가*/ "00",
-                /*주문단가*/ 시세?.하한가 ?? 10_000);
+            (주식주문현금DTO? order, string error) = await client.주식현금매수주문(종목코드, /*주문수량*/ 1, /*지정가*/ "00", 주문단가);
             if (order == null)
             {
-                Console.WriteLine($"[매수실패: 종목: {종목코드}, 가격: {시세?.하한가}] {error}");
+                Console.WriteLine($"[{DateTime.Now}] [매수실패: 종목: {종목코드} ({종목이름}), 가격: {주문단가}] {error}");
             }
             else
             {
-                Console.WriteLine($"[현금매수] {order}");
+                Console.WriteLine($"[{DateTime.Now}] [현금매수] {order}");
 
                 await Task.Delay(1000 * 5); // 5초 후 전량 취소
 
                 (var canceled, error) = await client.주식주문전량취소(order.KRX_FWDG_ORD_ORGNO, order.ODNO);
-                Console.WriteLine($"[전량취소] {canceled} {error}");
+                Console.WriteLine($"[{DateTime.Now}] [전량취소] {canceled} {error}");
             }
         }
 
+        if (useWebSocket)
         {
-            string 종목코드 = "305720"; // 종목코드(6자리)
-            Console.WriteLine($"[실시간 체결 구독] {종목코드}");
+            string 종목코드 = "226490"; // 종목코드(6자리)
+            string 종목이름 = client.GetCodeName(종목코드);
+            Console.WriteLine($"[{DateTime.Now}] [실시간 체결 구독] {종목코드}({종목이름})");
             await client.국내주식실시간체결가(종목코드, true);
 
             await Task.Delay(1000 * 30); // 30초 후 실시간 해제
-            Console.WriteLine($"[실시간 체결 해제] {종목코드}");
-            await Task.Delay(1000 * 30); // 30초 후 실시간 해제
             await client.국내주식실시간체결가(종목코드, false);
+            Console.WriteLine($"[{DateTime.Now}] [실시간 체결 해제] {종목코드}({종목이름})");
+            await Task.Delay(1000 * 30); // 30초 후 실시간 해제
         }
 
         Console.WriteLine("Press any key to exit...");
