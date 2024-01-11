@@ -125,9 +125,9 @@ public class 국내주식실시간체결가DTO
     {
         국내주식실시간체결가DTO dto = new 국내주식실시간체결가DTO();
 
-        if (values.Length != FieldCount)
+        if (values.Length < FieldCount)
         {
-            throw new ArgumentException($"Invalid field count: {values.Length} != {FieldCount}");
+            throw new ArgumentException($"Invalid field count: {values.Length} < {FieldCount}");
         }
 
         dto.유가증권단축종목코드 = values[0];
