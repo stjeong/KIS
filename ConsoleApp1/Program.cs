@@ -17,7 +17,10 @@ internal class Program
 
         client.국내주식실시간체결가Arrived += (sender, e) =>
         {
-            Console.WriteLine($"[{DateTime.Now}] [실시간 체결] {e}");
+            foreach (var item in e)
+            {
+                Console.WriteLine($"[{DateTime.Now}] [실시간 체결] {item}");
+            }
         };
 
         string tempDirectory = Path.Combine(Path.GetTempPath(), "eFriendOpenAPI");
@@ -46,6 +49,9 @@ internal class Program
             {
                 Console.WriteLine("Failed to get connection for websocket");
                 return;
+            } else
+            {
+                Console.WriteLine($"[{DateTime.Now}] websocket connected.");
             }
         }
 
@@ -110,7 +116,6 @@ internal class Program
             await Task.Delay(1000 * 30); // 30초 후 실시간 해제
             await client.국내주식실시간체결가(종목코드, false);
             Console.WriteLine($"[{DateTime.Now}] [실시간 체결 해제] {종목코드}({종목이름})");
-            await Task.Delay(1000 * 30); // 30초 후 실시간 해제
         }
 
         Console.WriteLine("Press any key to exit...");

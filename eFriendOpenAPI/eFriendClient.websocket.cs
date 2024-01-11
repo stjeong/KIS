@@ -1,5 +1,6 @@
 ﻿using ConsoleApp1.Packet;
 using eFriendOpenAPI.Packet;
+using System.Buffers;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Text.Json;
 namespace eFriendOpenAPI;
 partial class eFriendClient
 {
-    public event EventHandler<국내주식실시간체결가DTO>? 국내주식실시간체결가Arrived;
+    public event EventHandler<국내주식실시간체결가DTO[]>? 국내주식실시간체결가Arrived;
 
     public async Task<string> GetApprovalKey()
     {
@@ -23,7 +24,7 @@ partial class eFriendClient
         return "";
     }
 
-    protected virtual void On국내주식실시간체결가Event(국내주식실시간체결가DTO e)
+    protected virtual void On국내주식실시간체결가Event(국내주식실시간체결가DTO[] e)
     {
         국내주식실시간체결가Arrived?.Invoke(this, e);
     }
@@ -89,41 +90,51 @@ partial class eFriendClient
 
         while (_webSocket.State == System.Net.WebSockets.WebSocketState.Open)
         {
-            var buffer = new ArraySegment<byte>(new byte[4096]);
-            var result = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
-            if (result.MessageType == System.Net.WebSockets.WebSocketMessageType.Close)
+            byte[] rentBuffer = ArrayPool<byte>.Shared.Rent(16384);
+
+            try
             {
-                await _webSocket.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                var buffer = new ArraySegment<byte>(rentBuffer);
+                var result = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
+                if (result.MessageType == System.Net.WebSockets.WebSocketMessageType.Close)
+                {
+                    await _webSocket.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                }
+                else
+                {
+                    byte[] encoded = buffer.Array ?? Array.Empty<byte>();
+
+                    if (encoded.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    string data = Encoding.UTF8.GetString(encoded, 0, encoded.Length);
+                    string[] recvstr;
+                    string trid0;
+                    int data_cnt;
+
+                    // https://github.com/koreainvestment/open-trading-api/blob/main/websocket/python/ws_domestic_overseas_all.py
+                    switch (encoded[0])
+                    {
+                        case (byte)'0':
+                            recvstr = data.Split('|');
+                            trid0 = recvstr[1];
+
+                            switch (trid0)
+                            {
+                                case 국내주식실시간체결가Query.TR_ID: // 주식 체결 데이터 처리
+                                    data_cnt = int.Parse(recvstr[2]);
+                                    stockspurchase_domestic(data_cnt, recvstr[3]);
+                                    break;
+                            }
+                            break;
+                    }
+                }
             }
-            else
+            finally
             {
-                byte[] encoded = buffer.Array ?? Array.Empty<byte>();
-
-                if (encoded.Length == 0)
-                {
-                    continue;
-                }
-
-                string data = Encoding.UTF8.GetString(encoded, 0, encoded.Length);
-                string[] recvstr;
-                string trid0;
-                int data_cnt;
-
-                switch (encoded[0])
-                {
-                    case (byte)'0':
-                        recvstr = data.Split('|');
-                        trid0 = recvstr[1];
-
-                        switch (trid0)
-                        {
-                            case 국내주식실시간체결가Query.TR_ID: // 주식 체결 데이터 처리
-                                data_cnt = int.Parse(recvstr[2]);
-                                stockspurchase_domestic(data_cnt, recvstr[3]);
-                                break;
-                        }
-                        break;
-                }
+                ArrayPool<byte>.Shared.Return(rentBuffer);
             }
         }
 
@@ -133,13 +144,14 @@ partial class eFriendClient
     public void stockspurchase_domestic(int data_cnt, string data)
     {
         string[] pValue = data.Split('^');
+        국내주식실시간체결가DTO[] dtoArr = new 국내주식실시간체결가DTO[data_cnt];
 
         for (int cnt = 0; cnt < data_cnt; cnt++)
         {
-            국내주식실시간체결가DTO dto = 국내주식실시간체결가DTO.Parse(pValue);
+            dtoArr[cnt] = 국내주식실시간체결가DTO.Parse(pValue);
             pValue = pValue[국내주식실시간체결가DTO.FieldCount..];
-
-            On국내주식실시간체결가Event(dto);
         }
+
+        On국내주식실시간체결가Event(dtoArr);
     }
 }
