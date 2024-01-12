@@ -1,4 +1,5 @@
 ﻿using Cysharp.Web;
+using eFriendOpenAPI.Extension;
 using eFriendOpenAPI.Packet;
 using System.Net.Http.Json;
 
@@ -67,7 +68,7 @@ partial class eFriendClient
 
         string url = "/uapi/domestic-stock/v1/trading/order-cash";
 
-        var response = await client.PostAsJsonAsync(url, query);
+        var response = await client.PostJsonContent(url, query);
         var respBody = await response.Content.ReadFromJsonAsync<PacketResponse<주식주문현금DTO>>();
 
         if (response.IsSuccessStatusCode)
@@ -158,7 +159,7 @@ partial class eFriendClient
 
         string url = "/uapi/domestic-stock/v1/trading/order-rvsecncl";
 
-        var response = await client.PostAsJsonAsync(url, query);
+        var response = await client.PostJsonContent(url, query);
         var respBody = await response.Content.ReadFromJsonAsync<PacketResponse<주식주문정정취소DTO>>();
 
         if (response.IsSuccessStatusCode)

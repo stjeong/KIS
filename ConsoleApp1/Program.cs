@@ -84,7 +84,7 @@ internal class Program
         else
         {
             // 주식 주문 및 취소 (테스트를 위해, 하한가로 주문 후 전량 취소)
-            string 종목코드 = "305720"; // 종목코드(6자리)
+            string 종목코드 = "329200"; // 종목코드(6자리)
             string 종목이름 = client.GetCodeName(종목코드);
 
             var 시세 = await client.주식현재가시세(종목코드);
