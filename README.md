@@ -2,8 +2,7 @@
 
 ![NuGet version](https://img.shields.io/nuget/v/eFriendOpenAPI)
 
-C# - eFriend Expert OCX 예제를 .NET Core/5+ Console App에서 사용하는 방법
-; https://www.sysnet.pe.kr/2/0/13482
+한국투자증권 KIS Developers OpenAPI의 C# 래퍼 버전 - eFriendOpenAPI NuGet 패키지 - https://www.sysnet.pe.kr/2/0/13498
 
 ## Usage instructions
 Initialize Client object with appkey, appsecret and account
