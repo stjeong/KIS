@@ -3,8 +3,10 @@ using eFriendOpenAPI.Packet;
 using System.Buffers;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace eFriendOpenAPI;
 partial class eFriendClient
@@ -39,6 +41,30 @@ partial class eFriendClient
         string tr_type = register ? "1" : "2";
         string custtype = _isLegalPerson ? "B" : "P";
         국내주식실시간체결가Query query = new 국내주식실시간체결가Query(_approvalKey, custtype, tr_type, 종목코드);
+
+        string jsonRequest = JsonSerializer.Serialize(query);
+        byte[] buffer = Encoding.UTF8.GetBytes(jsonRequest);
+        await _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+
+        return true;
+    }
+
+    /// <summary>
+    /// 국내주식 실시간 체결통보 수신 시에 (1) 주문·정정·취소·거부 접수 통보 와 (2) 체결 통보 가 모두 수신됩니다.
+    /// </summary>
+    /// <param name="tr_key">HTS ID</param>
+    /// <param name="register">true : 등록, false : 해제</param>
+    /// <returns></returns>
+    public async Task<bool> 국내주식실시간체결통보(string tr_key, bool register)
+    {
+        if (_webSocket == null)
+        {
+            return false;
+        }
+
+        string tr_type = register ? "1" : "2";
+        string custtype = _isLegalPerson ? "B" : "P";
+        국내주식실시간체결통보Query query = new 국내주식실시간체결통보Query(_approvalKey, custtype, tr_type, tr_key, _isVTS);
 
         string jsonRequest = JsonSerializer.Serialize(query);
         byte[] buffer = Encoding.UTF8.GetBytes(jsonRequest);
@@ -88,6 +114,9 @@ partial class eFriendClient
             return;
         }
 
+        string aesKey = "";
+        string aesIV = "";
+
         while (_webSocket.State == System.Net.WebSockets.WebSocketState.Open)
         {
             byte[] rentBuffer = ArrayPool<byte>.Shared.Rent(16384);
@@ -129,6 +158,63 @@ partial class eFriendClient
                                     break;
                             }
                             break;
+
+                        case (byte)'1':
+                            recvstr = data.Split('|');
+                            trid0 = recvstr[1];
+
+                            switch (trid0)
+                            {
+                                case 국내주식실시간체결통보Query.TR_ID:
+                                case 국내주식실시간체결통보Query.TR_VTS_ID:
+                                    stocksigningnotice_domestic(recvstr[3], aesKey, aesIV);
+                                    break;
+                            }
+                            break;
+
+                        default:
+                            WebSocketResponse? response = JsonSerializer.Deserialize<WebSocketResponse>(data);
+                            string? tr_key = response?.header?.tr_key;
+                            string? rt_cd = response?.body?.rt_cd;
+                            string? tr_id = response?.header?.tr_id;
+                            string? msg1 = response?.body?.msg1;
+
+                            string? aes_key = response?.body?.output?.key;
+                            string? aes_iv = response?.body?.output?.iv;
+
+                            switch (response?.header?.tr_id)
+                            {
+                                case "PINGPONG":
+                                    System.Diagnostics.Trace.WriteLine(data);
+                                    break;
+
+                                default:
+                                    switch (rt_cd)
+                                    {
+                                        case "1":
+                                            if (msg1 != "ALREADY IN SUBSCRIBE")
+                                            {
+                                                System.Diagnostics.Trace.WriteLine($"### ERROR RETURN CODE [{tr_key}][{rt_cd}] MSG [{msg1}]");
+                                            }
+                                            break;
+
+                                        case "0":
+                                            System.Diagnostics.Trace.WriteLine($"### RETURN CODE [{tr_key}][{rt_cd}] MSG [{msg1}]");
+                                            switch (tr_id)
+                                            {
+                                                case 국내주식실시간체결통보Query.TR_ID:
+                                                case 국내주식실시간체결통보Query.TR_VTS_ID:
+                                                    aesKey = aes_key ?? "";
+                                                    aesIV = aes_iv ?? "";
+                                                    System.Diagnostics.Trace.WriteLine("### TRID [{trid}] KEY[{aesKey}] IV[{aesIV}]");
+                                                    break;
+                                            }
+                                            break;
+                                    }
+                                    break;
+                            }
+
+                            break;
                     }
                 }
             }
@@ -153,5 +239,10 @@ partial class eFriendClient
         }
 
         On국내주식실시간체결가Event(dtoArr);
+    }
+
+    public void stocksigningnotice_domestic(string data, string key, string iv)
+    {
+        // Aes.Decrypt()
     }
 }
